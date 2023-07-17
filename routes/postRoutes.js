@@ -3,10 +3,11 @@ const User = require("../model/userModel");
 const jwt = require("jsonwebtoken");
 const BlacklistToken = require("../model/blacklist");
 const Post = require("../model/postModel");
+const middleware = require("../middleware/auth")
 
 const router = express.Router()
 
-router.get("/", async (req, res) => {
+router.get("/", middleware, async (req, res) => {
     const { page, limit, device1, device2 } = req.query
     const { userId } = req.body
     if (userId) {
@@ -28,7 +29,7 @@ router.get("/", async (req, res) => {
     }
 })
 
-router.post("/add", async (req, res) => {
+router.post("/add", middleware, async (req, res) => {
     try {
         const posts = await Post.create({ ...req.body, userId: req.userId, name: req.name })
         await posts.save()
@@ -38,7 +39,7 @@ router.post("/add", async (req, res) => {
     }
 })
 
-router.patch("/update/:postId", async (req, res) => {
+router.patch("/update/:postId", middleware, async (req, res) => {
     const postId = req.params.postId
     try {
 
@@ -58,7 +59,7 @@ router.patch("/update/:postId", async (req, res) => {
     }
 })
 
-router.delete("/delete/:postId", async (req, res) => {
+router.delete("/delete/:postId", middleware, async (req, res) => {
     const postId = req.params.postId
     try {
 
